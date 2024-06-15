@@ -1,0 +1,33 @@
+---
+- name: Download mysql gpg public key
+  ansible.builtin.get_url:
+    url: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x{{ gpg_fingerprint }}"
+    dest: /etc/apt/trusted.gpg.d/mysql.asc
+
+- name: Run gpg dry run and extract fingerprint
+  ansible.builtin.shell: gpg --dry-run --quiet --no-keyring --import --import-options import-show /etc/apt/trusted.gpg.d/mysql.asc
+  register: dry_run_result
+
+- name: Verify the fingerprint and fail playbook if no match
+  ansible.builtin.fail:
+    msg: Result fingerprint does not match the official fingerprint
+  when: "gpg_fingerprint not in dry_run_result.stdout"
+
+- name: Add mysql repo to sources
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/trusted.gpg.d/mysql.asc] http://repo.mysql.com/apt/ubuntu {{ ansible_distribution_release }} mysql-8.0"
+    state: present
+    update_cache: true
+
+- name: Install MySql
+  ansible.builtin.apt:
+    name:
+      - "mysql-server={{ mysql_version }}*"
+    state: present
+    update_cache: true
+
+- name: Ensure mysql service is started and enabled
+  ansible.builtin.service:
+    name: mysql
+    state: started
+    enabled: true

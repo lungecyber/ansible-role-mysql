@@ -1,0 +1,6 @@
+---
+- name: Ensure all databases are created
+  community.mysql.mysql_db:
+    name: "{{ mysql_databases }}"
+    state: present
+  when: "mysql_databases is defined"

@@ -1,0 +1,10 @@
+---
+- name: Ensure all users are created
+  community.mysql.mysql_user:
+    name: "{{ item.name }}"
+    host: "{{ item.host }}"
+    password: "{{ item.password }}"
+    priv: "{{ item.priv }}"
+  with_items: "{{ mysql_users }}"
+  when: "mysql_users is defined"
+  no_log: true
