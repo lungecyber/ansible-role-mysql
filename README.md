@@ -7,7 +7,7 @@
 
 | Variable Name | Value | Type | Default |
 | ------ | ------ | ------ | ------ |
-| mysql_version | defines which mysql version will be installed | String | 8.0 |
+| mysql_version | defines which version of mysql will be installed | String | 8.0 |
 | mysql_root_password | defines the password of root user | String | ScandiwebTest1234! |
 | mysql_users | defines users to be created | List of Dictionaries | None |
 | mysql_databases | defines databases to be created | List | None |
